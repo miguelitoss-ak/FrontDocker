@@ -14,7 +14,6 @@ export default defineConfig({
   optimizeDeps: {
     include: ['axios'],
   },
-
   server: {
     port: 5173,
     // Durante o desenvolvimento, toda requisição para /api é repassada ao
