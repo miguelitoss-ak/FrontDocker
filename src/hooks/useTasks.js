@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { getErrorMessage } from "../services/api";
-import { listTasks } from "../services/tasks";
+import { createTask, listTasks, updateTask } from "../services/tasks";
 
 export function useTasks() {
   const [tasks, setTasks] = useState([]);
   const [status, setStatus] = useState('loading');
   const [loadError, setLoadError] = useState(null);
   const [reloadKey, setReloadKey] = useState(0);
+  const [actionError, setActionError] = useState(null);
 
 
   useEffect(() => {
@@ -34,5 +35,31 @@ export function useTasks() {
     setLoadError(null);
     setReloadKey((prevKey) => prevKey + 1);
   }
-  return { tasks, status, loadError, reload };
+   async function run(request) {
+        setActionError(null);
+        try {
+            await request();
+            return true;
+        } catch (error) {
+          console.error(error);
+            setActionError(getErrorMessage(error));
+            return false;
+        }
+    }
+
+    const addTask = async (data) => {
+        return run(async () => {
+            const newTask = await createTask(data);
+            setTasks(prevTasks => [...prevTasks, newTask]);
+        });
+    }
+
+    const toggleTask = async (task) => {
+        return run(async () => {
+            const updatedTask = await updateTask(task.id, { concluida: !task.concluida });
+            setTasks(prevTasks => prevTasks.map(t => t.id === task.id ? updatedTask : t));
+        });
+    }
+
+    return { tasks, status, loadError, reload, actionError, clearActionError: () => setActionError(null), addTask, toggleTask };
 }
