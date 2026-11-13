@@ -8,7 +8,7 @@ import TaskList from "./components/TaskList";
 import { useTasks} from "./hooks/useTasks"
 
 export default function App() {
-  const { tasks, status, loadError, reload, addTask, toggleTask, actionError, clearActionError } = useTasks();
+  const { tasks, status, loadError, reload, addTask, editTask, toggleTask, actionError, clearActionError } = useTasks();
 
 
   return (
@@ -42,7 +42,7 @@ export default function App() {
           {tasks.length === 0 ? (
             <div className="notice notice--info" role="status"><p>Nenhuma tarefa cadastrada</p></div>
           ) : (
-            <TaskList tasks={tasks} onToggle={toggleTask} />
+            <TaskList tasks={tasks} onToggle={toggleTask} onEdit={editTask} />
           )}
           </>
         )}
